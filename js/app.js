@@ -82,17 +82,47 @@ document.getElementById("btnIdioma").addEventListener("click", ()=>{
 });
 
 /* ---------- Carga de datos desde Firestore ---------- */
-async function cargarDatos(){
-  try{
-    const [catSnap, prodSnap, cfgSnap] = await Promise.all([
-      db.collection("categorias").orderBy("orden").get(),
-      db.collection("productos").orderBy("orden").get(),
-      db.collection("config").doc("general").get()
-    ]);
-    categorias = catSnap.docs.map(d=>({ id:d.id, ...d.data() }));
-    productos = prodSnap.docs.map(d=>({ id:d.id, ...d.data() }));
-    config = cfgSnap.exists ? cfgSnap.data() : {};
+let _catCargada = false, _prodCargado = false, _cfgCargada = false;
+let _timeoutAviso = null;
 
+function _intentarRenderizarInicial(){
+  if(_catCargada && _prodCargado && _cfgCargada){
+    clearTimeout(_timeoutAviso);
+    renderChips();
+    renderMenu();
+    verificarHorario();
+    aplicarIdioma();
+  }
+}
+
+function cargarDatos(){
+  // Si la conexión tarda demasiado, avisamos sin cortar la espera:
+  // los listeners de abajo se quedan escuchando y se actualizan solos
+  // en cuanto la conexión llega, incluso si tarda varios segundos.
+  _timeoutAviso = setTimeout(()=>{
+    document.getElementById("contenedorMenu").innerHTML =
+      `<p style="text-align:center;padding:60px 0;">Cargando el menú… tu conexión está lenta, pero seguimos intentando. Si esto no cambia en un minuto, revisa tu internet o vuelve a intentarlo.</p>`;
+  }, 8000);
+
+  db.collection("categorias").orderBy("orden").onSnapshot(catSnap=>{
+    categorias = catSnap.docs.map(d=>({ id:d.id, ...d.data() }));
+    _catCargada = true;
+    _intentarRenderizarInicial();
+  }, err=>{
+    console.error("Error escuchando categorías:", err);
+  });
+
+  db.collection("productos").orderBy("orden").onSnapshot(prodSnap=>{
+    productos = prodSnap.docs.map(d=>({ id:d.id, ...d.data() }));
+    _prodCargado = true;
+    _intentarRenderizarInicial();
+    renderMenu();
+  }, err=>{
+    console.error("Error escuchando productos:", err);
+  });
+
+  db.collection("config").doc("general").onSnapshot(cfgSnap=>{
+    config = cfgSnap.exists ? cfgSnap.data() : {};
     document.getElementById("nombreNegocio").textContent = config.nombreNegocio || "Face Coffee";
     document.getElementById("direccionTexto").textContent = config.direccion || "";
     document.getElementById("linkInstagram").textContent = config.instagram || "Instagram";
@@ -103,16 +133,13 @@ async function cargarDatos(){
     if(config.horarioApertura && config.horarioCierre){
       document.getElementById("horarioTexto").textContent = `${config.horarioApertura} – ${config.horarioCierre}`;
     }
-
-    renderChips();
-    renderMenu();
+    _cfgCargada = true;
+    _intentarRenderizarInicial();
     verificarHorario();
     aplicarIdioma();
-  }catch(err){
-    console.error("Error cargando datos de Face Coffee:", err);
-    document.getElementById("contenedorMenu").innerHTML =
-      `<p style="text-align:center;padding:60px 0;">No se pudo cargar el menú. Revisa la configuración de Firebase en <code>js/firebase-config.js</code> (ver README.md) o tu conexión a internet.</p>`;
-  }
+  }, err=>{
+    console.error("Error escuchando config:", err);
+  });
 }
 
 /* ---------- Aviso fuera de horario ---------- */
