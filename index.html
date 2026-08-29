@@ -1,138 +1,24 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Face Coffee — ¡Qué chevere!</title>
-<meta name="description" content="Face Coffee, el spot más bacán de La Maná. Café, frappés, milkshakes, cerveza, miches y cócteles. Pide desde la web y recíbelo por WhatsApp.">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+/* ============================================================
+   FACE COFFEE — Configuración de Firebase
+   ------------------------------------------------------------
+   PASO OBLIGATORIO: reemplaza los valores de abajo con los de
+   TU proyecto de Firebase. Los encuentras en:
+   Firebase Console > Configuración del proyecto > Tus apps > SDK
 
-<div id="avisoHorario" class="aviso-horario"></div>
+   Instrucciones completas paso a paso en README.md
+   ============================================================ */
 
-<header class="header">
-  <div class="contenedor header__inner">
-    <div class="logo"><span class="logo__badge">☕</span><span id="nombreNegocio">Face Coffee</span></div>
-    <div class="header__acciones">
-      <button class="btn-lang" id="btnIdioma">EN</button>
-      <button class="btn-carrito" id="btnAbrirCarrito">
-        🧾 <span data-i18n="carrito">Pedido</span>
-        <span class="btn-carrito__contador" id="contadorCarrito">0</span>
-      </button>
-    </div>
-  </div>
-</header>
+const firebaseConfig = {
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROYECTO.firebaseapp.com",
+  projectId: "TU_PROYECTO",
+  storageBucket: "TU_PROYECTO.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
+};
 
-<section class="hero">
-  <div class="hero__rayos" aria-hidden="true">
-    <svg viewBox="0 0 200 200"><g fill="#FFC629">
-      <script>/* rayos generados abajo por JS para no repetir markup */</script>
-    </g></svg>
-  </div>
-  <div class="contenedor hero__contenido">
-    <h1 class="hero__marca">FACE<br>COFFEE</h1>
-    <p class="hero__eslogan" id="eslogan">¡Qué chevere!</p>
-    <p class="hero__texto" id="heroTexto">El spot más bacán del barrio para desestresarse del camello o las clases. Pégate unas crepes buenazas, un café helado bien del puctas y pasa con tus panas como en casa.</p>
-    <div class="hero__cta">
-      <a href="#menu" class="btn" data-i18n="ver_menu">Ver menú</a>
-      <a href="#ubicacion" class="btn btn--outline" data-i18n="como_llegar">Cómo llegar</a>
-    </div>
-  </div>
-</section>
-
-<nav class="chips" id="chipsCategorias" aria-label="Categorías del menú">
-  <div class="chips__lista" id="listaChips"></div>
-</nav>
-
-<main class="menu contenedor" id="menu">
-  <div id="contenedorMenu">
-    <p style="text-align:center;padding:60px 0;">Cargando menú…</p>
-  </div>
-</main>
-
-<section class="info" id="ubicacion">
-  <div class="contenedor">
-    <div class="info__grid">
-      <div class="info__bloque">
-        <h3 data-i18n="ubicanos">📍 Ubícanos</h3>
-        <p id="direccionTexto">Calle General Enrique Gallo, diagonal al Cementerio Municipal, La Maná</p>
-      </div>
-      <div class="info__bloque">
-        <h3 data-i18n="horario">🕒 Horario</h3>
-        <p id="horarioTexto">—</p>
-      </div>
-      <div class="info__bloque">
-        <h3 data-i18n="contacto">📲 Contacto</h3>
-        <p><a id="linkWhatsappFooter" href="#" target="_blank">WhatsApp</a></p>
-        <p><a id="linkInstagram" href="#" target="_blank">Instagram</a></p>
-      </div>
-    </div>
-    <div class="info__pie">
-      <p id="mensajeCierre" data-i18n="no_seas_quedao">¡No te sea quedao, te esperamos veci! 😎</p>
-      <p style="margin-top:10px;"><a href="admin.html">Panel de administración</a></p>
-    </div>
-  </div>
-</section>
-
-<!-- Carrito lateral -->
-<div class="overlay" id="overlay"></div>
-<aside class="carrito" id="carrito" aria-label="Carrito de pedido">
-  <div class="carrito__borde"></div>
-  <div class="carrito__header">
-    <span class="carrito__titulo" data-i18n="tu_pedido">🧾 Tu pedido</span>
-    <button class="carrito__cerrar" id="btnCerrarCarrito">✕</button>
-  </div>
-  <div class="carrito__lista" id="listaCarrito">
-    <p class="carrito__vacio" data-i18n="carrito_vacio">Tu carrito está vacío. ¡Agrega algo bien chevere!</p>
-  </div>
-
-  <div class="carrito__opciones" id="opcionesCarrito" style="display:none;">
-    <div class="campo">
-      <label data-i18n="tipo_entrega">Tipo de entrega</label>
-      <div class="segmentado">
-        <button type="button" class="activo" id="btnRecoger" data-i18n="recoger">Recoger en local</button>
-        <button type="button" id="btnDelivery" data-i18n="delivery">Delivery</button>
-      </div>
-    </div>
-    <div class="campo" id="campoDireccion" style="display:none;">
-      <label data-i18n="direccion_entrega">Dirección de entrega</label>
-      <textarea id="inputDireccion" rows="2" placeholder="Calle, referencia..."></textarea>
-    </div>
-    <div class="campo">
-      <label data-i18n="metodo_pago">Método de pago</label>
-      <select id="selectPago">
-        <option value="efectivo" data-i18n="efectivo">Efectivo</option>
-        <option value="transferencia" data-i18n="transferencia">Transferencia</option>
-        <option value="linea" data-i18n="pago_linea">Pago en línea (coordinar por WhatsApp)</option>
-      </select>
-    </div>
-    <div class="campo">
-      <label data-i18n="tu_nombre">Tu nombre</label>
-      <input type="text" id="inputNombre" placeholder="¿Cómo te llamas?">
-    </div>
-  </div>
-
-  <div class="carrito__resumen" id="resumenCarrito" style="display:none;">
-    <div class="carrito__fila-total">
-      <span data-i18n="total">Total</span>
-      <span id="totalCarrito">$0,00</span>
-    </div>
-  </div>
-  <button class="carrito__enviar" id="btnEnviarPedido" style="display:none;">
-    📲 <span data-i18n="enviar_whatsapp">Enviar pedido por WhatsApp</span>
-  </button>
-</aside>
-
-<div class="toast" id="toast"></div>
-
-<!-- Firebase SDK (compat, sin build tools) -->
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/app.js"></script>
-</body>
-</html>
+// Inicializar Firebase (usa el SDK "compat" cargado en el <head>)
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
