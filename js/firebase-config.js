@@ -9,12 +9,12 @@
    ============================================================ */
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  projectId: "TU_PROYECTO",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyDIzXMou-4UPPp9oZFgb8XKoG3YA-zkk8Q",
+  authDomain: "face-coffee.firebaseapp.com",
+  projectId: "face-coffee",
+  storageBucket: "face-coffee.firebasestorage.app",
+  messagingSenderId: "515569552050",
+  appId: "1:515569552050:web:bd695a07bce0ffe3c397ab"
 };
 
 // Inicializar Firebase (usa el SDK "compat" cargado en el <head>)
