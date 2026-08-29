@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Face Coffee — Panel de administración</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<!-- ---------- LOGIN ---------- -->
+<div class="pantalla-login" id="pantallaLogin">
+  <div class="tarjeta-login">
+    <h1>☕ Face Coffee</h1>
+    <p>Panel de administración — inicia sesión para continuar</p>
+    <div class="campo">
+      <label>Correo</label>
+      <input type="email" id="inputEmail" placeholder="admin@facecoffee.com" autocomplete="username">
+    </div>
+    <div class="campo">
+      <label>Contraseña</label>
+      <input type="password" id="inputPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn" id="btnLogin">Iniciar sesión</button>
+    <p class="error-login" id="errorLogin"></p>
+    <p style="font-size:.75rem;color:var(--espresso);margin-top:16px;">
+      ¿Primera vez aquí? Revisa el <strong>README.md</strong> del proyecto: ahí se explica cómo crear tu usuario de administrador en Firebase.
+    </p>
+  </div>
+</div>
+
+<!-- ---------- PANEL ---------- -->
+<div class="panel" id="panel">
+  <div class="barra-superior">
+    <h1>☕ Face Coffee — Admin</h1>
+    <div class="acciones">
+      <a href="index.html" target="_blank">Ver sitio ↗</a>
+      <button class="btn-chico" id="btnLogout">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <div class="contenedor">
+
+    <div class="pestanas">
+      <button class="pestana activa" data-seccion="productos">🧾 Productos</button>
+      <button class="pestana" data-seccion="config">⚙️ Datos del negocio</button>
+      <button class="pestana" data-seccion="inicio">🚀 Primeros pasos</button>
+    </div>
+
+    <!-- ===== PRODUCTOS ===== -->
+    <section class="seccion activa" id="seccion-productos">
+      <div class="tarjeta">
+        <div class="barra-filtro">
+          <select id="filtroCategoria"><option value="">Todas las categorías</option></select>
+          <input type="text" id="filtroBusqueda" placeholder="Buscar producto...">
+          <button class="btn btn--sol" style="width:auto;" id="btnNuevoProducto">➕ Nuevo producto</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="tablaProductos"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONFIG DEL NEGOCIO ===== -->
+    <section class="seccion" id="seccion-config">
+      <div class="tarjeta">
+        <h2 style="margin-bottom:16px;">Datos del negocio</h2>
+        <div class="fila-2">
+          <div class="campo"><label>Nombre del negocio</label><input id="cfgNombre"></div>
+          <div class="campo"><label>WhatsApp (10 dígitos, ej. 0963650750)</label><input id="cfgWhatsapp"></div>
+        </div>
+        <div class="campo"><label>Dirección</label><input id="cfgDireccion"></div>
+        <div class="fila-2">
+          <div class="campo"><label>Instagram (usuario, ej. @ffacecoffee)</label><input id="cfgInstagram"></div>
+          <div class="campo"></div>
+          <div class="campo"><label>Hora de apertura</label><input type="time" id="cfgApertura"></div>
+          <div class="campo"><label>Hora de cierre</label><input type="time" id="cfgCierre"></div>
+        </div>
+        <div class="fila-2">
+          <div class="campo"><label>Eslogan (Español)</label><input id="cfgEsloganEs"></div>
+          <div class="campo"><label>Eslogan (Inglés)</label><input id="cfgEsloganEn"></div>
+        </div>
+        <div class="fila-2">
+          <div class="campo"><label>Mensaje de bienvenida (Español)</label><textarea id="cfgMensajeEs" rows="3"></textarea></div>
+          <div class="campo"><label>Mensaje de bienvenida (Inglés)</label><textarea id="cfgMensajeEn" rows="3"></textarea></div>
+        </div>
+        <button class="btn btn--sol" style="width:auto;" id="btnGuardarConfig">💾 Guardar cambios</button>
+        <p class="estado-guardado" id="estadoConfig"></p>
+      </div>
+    </section>
+
+    <!-- ===== PRIMEROS PASOS / SEED ===== -->
+    <section class="seccion" id="seccion-inicio">
+      <div class="tarjeta">
+        <h2 style="margin-bottom:10px;">🚀 Primeros pasos</h2>
+        <p class="aviso">
+          Usa esto <strong>solo una vez</strong>, cuando el sitio esté recién conectado a tu proyecto de Firebase
+          y aún no tenga productos cargados. Esto crea automáticamente todas las categorías, el menú completo
+          de Face Coffee y los datos del negocio (WhatsApp, dirección, horario). Si ya tienes productos cargados,
+          no lo vuelvas a usar: podría duplicarlos.
+        </p>
+        <button class="btn" id="btnSembrar">📦 Cargar menú inicial en Firebase</button>
+        <p class="estado-guardado" id="estadoSembrado"></p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ---------- MODAL PRODUCTO ---------- -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitulo">Nuevo producto</h2>
+    <input type="hidden" id="prodId">
+    <div class="campo"><label>Nombre</label><input id="prodNombre" placeholder="Ej. Capuchino"></div>
+    <div class="fila-2">
+      <div class="campo"><label>Categoría</label><select id="prodCategoria"></select></div>
+      <div class="campo"><label>Precio (USD)</label><input type="number" step="0.01" id="prodPrecio" placeholder="2.50"></div>
+    </div>
+    <div class="campo"><label>Descripción (opcional)</label><textarea id="prodDescripcion" rows="2" placeholder="Ej. Con leche de avena, extra shot..."></textarea></div>
+    <div class="campo"><label>Orden dentro de su categoría</label><input type="number" id="prodOrden" placeholder="1"></div>
+    <label class="check-linea"><input type="checkbox" id="prodDisponible" checked> Disponible para la venta</label>
+    <div class="acciones-modal">
+      <button class="btn" style="background:#eee;color:var(--tinta);border-color:var(--linea);" id="btnCancelarProducto">Cancelar</button>
+      <button class="btn btn--sol" id="btnGuardarProducto">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data-seed.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
